@@ -5,6 +5,41 @@
 
 namespace py = pybind11;
 
+inline float mat_index(float *X, size_t i, size_t j, size_t m, size_t n){
+    assert(i < m && j < n);
+    return X[i * n + j];
+}
+
+inline void mat_index_write(float *X, size_t val, size_t i, size_t j, size_t m, size_t n){
+    assert(i < m && j < n);
+    X[i * n + j] = val;
+}
+
+
+void matmul(float *X, 
+    float *lhs, 
+    float *rhs,
+    size_t m,
+    size_t n,
+    size_t k){
+    /**
+     * Perform matrix mulipication on lhs and rhs
+     * lhs: (m, n)
+     * rhs: (n, k)
+     * X: (m, k)
+    */
+   for(size_t row = 0; row < m; row++){
+    for(size_t col = 0; col < k; col++){
+        int temp = 0;
+        for(size_t itm = 0; itm < n; itm++){
+            temp += mat_index(lhs, row, itm, m, n) * mat_index(rhs, itm, col, n, k);
+        }
+        mat_index_write(X, temp, row, col, m , k);
+    }
+   }
+}
+
+
 
 void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
 								  float *theta, size_t m, size_t n, size_t k,
@@ -33,7 +68,13 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
      */
 
     /// BEGIN YOUR CODE
-
+    size_t num_samples = m;
+    for(size_t idx = 0; idx < num_samples; idx += batch){
+        float *minibatch = new float[batch * n];
+        std::memcpy(minibatch, X + idx * n * sizeof(float), batch * n * sizeof(float));
+        unsigned char*minibatch_label = new unsigned char[batch];
+        
+    }
     /// END YOUR CODE
 }
 

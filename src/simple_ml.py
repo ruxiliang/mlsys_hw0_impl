@@ -114,6 +114,8 @@ def softmax_regression_epoch(X, y, theta, lr = 0.1, batch=100):
     num_samples = X.shape[0]
     for idx in range(0, num_samples, batch):
         minibatch = X[idx:idx+batch, :]
+        if idx == 10:
+            np.save('minibatch.npy', minibatch)
         minibatch_label = y[idx:idx+batch]
         h = minibatch @ theta
         h_normalized = h - np.max(h, axis=1, keepdims=True)
@@ -122,7 +124,10 @@ def softmax_regression_epoch(X, y, theta, lr = 0.1, batch=100):
         labels = np.zeros(Z.shape)
         labels[np.arange(labels.shape[0]), minibatch_label] = 1
         grad = 1/batch * (minibatch.T @ (Z - labels))
+        np.save(f'grad_{idx}.npy', grad)
         theta -=  lr * grad
+        np.save(f'theta_{idx}.npy', theta)
+    
     ### END YOUR CODE
 
 
